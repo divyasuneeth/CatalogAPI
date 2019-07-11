@@ -1,17 +1,21 @@
 {% extends "main.html" %}
 {% block content %}
 <div>
-  <h3>Add Item</h3>
+  <h3>Edit Item</h3>
   <div><label for="title">Title</label>
-  <input type="text" name="title" value=""></div>
+  <input type="text" name="title" value="{{item.name}}"></div>
   <div><label for="desc">Description</label>
-  <input type="text" name="desc" value=""></div>
+  <input type="text" name="desc" value="{{item.description}}"></div>
   <div>
     <label for="catagory">Category</label>
 
     <select  name="category">
       {%for c in categories%}
-        <option value="{{c.id}}">{{c.name}}</option>
+          {% if c.id==item.category_id %}
+            <option value="{{c.id}}" selected>{{c.name}}</option>
+          {% else%}
+              <option value="{{c.id}}">{{c.name}}</option>
+          {% endif %}
       {%endfor%}
     </select>
   </div>

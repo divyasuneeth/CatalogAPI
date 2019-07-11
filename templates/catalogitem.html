@@ -2,6 +2,7 @@
 {% block content %}
 
   {% for item in items %}
-      <a href="{{url_for('showItemDescription',catalogItem=catalogItem,item=item.name)}}"> {{item.name}} </a> <br>
+      <a href="{{url_for('showItemDescription',catalogItem=catalogItem,item=item.name)}}">{{item.name}} </a>
+      <a href="{{url_for('editItem',itemid=item.id)}}">Edit </a><br>
   {% endfor %}
 {% endblock %}
