@@ -1,0 +1,8 @@
+{% extends "main.html" %}
+{% block content %}
+<a href="{{url_for('addNewItem')}}">Add item</a>
+
+{% for item in items %}
+  <h5>{{item.name}}</h5>
+  {% endfor %}
+{% endblock %}
