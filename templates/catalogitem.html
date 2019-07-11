@@ -1,0 +1,7 @@
+{%extends "main.html" %}
+{% block content %}
+
+  {% for item in items %}
+      <a href="{{url_for('showItemDescription',catalogItem=catalogItem,item=item.name)}}"> {{item.name}} </a> <br>
+  {% endfor %}
+{% endblock %}
