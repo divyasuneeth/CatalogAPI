@@ -1,12 +1,11 @@
 {%extends "main.html" %}
 {% block content %}
-<div>
-  
-  <a href="{{url_for('showlistItems')}}">Cancel</a>
-  <h4>Are you sure you want to delete {{item.name}} ?</h4>
-  <input type="button" name="yes" value="Yes">
+<form action="{{url_for('deleteItem',itemid=item.id)}}" method='post'>
+  <div>
 
-
-
-</div>
+    <a href="{{url_for('showlistItems')}}">Cancel</a>
+    <h4>Are you sure you want to delete {{item.name}} ?</h4>
+      <button id="submit" type="submit">Delete </button>
+  </div>
+</form>
 {% endblock %}

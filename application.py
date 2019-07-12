@@ -1,4 +1,4 @@
-from flask import Flask,render_template,url_for,request
+from flask import Flask,render_template,url_for,request,redirect,flash
 from sqlalchemy import create_engine, asc,desc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, ListItems,User
@@ -48,14 +48,29 @@ def addNewItem():
 
 @app.route('/catalog/<int:itemid>/edit',methods=['GET','POST'])
 def editItem(itemid):
-    item=session.query(ListItems).filter_by(id=itemid).first()
-    return render_template('editItem.html',categories=categories,item=item)
+    editeditem=session.query(ListItems).filter_by(id=itemid).one()
+    if request.method=='POST':
+        if request.form['name']:
+            editeditem.name = request.form['name']
+        if request.form['desc']:
+            editeditem.description= request.form['desc']
+        if request.form['category']:
+            editeditem.category_id=request.form['category']
+
+        return redirect(url_for('showlistItems'))
+    else:
+        return render_template('editItem.html',categories=categories,item=editeditem)
 
 
 @app.route('/catalog/<int:itemid>/delete',methods=['GET','POST'])
 def deleteItem(itemid):
-    item=session.query(ListItems).filter_by(id=itemid).first()
-    return render_template('deleteItem.html',categories=categories,item=item)
+    deleteitem=session.query(ListItems).filter_by(id=itemid).first()
+    if request.method=='POST':
+        session.delete(deleteitem)
+        session.commit()
+        return redirect(url_for('showlistItems'))
+    else:
+        return render_template('deleteItem.html',categories=categories,item=deleteitem)
 
 
 if __name__ =='__main__':
