@@ -31,7 +31,11 @@ nav ul {
   padding: 0;
 }
 
-
+article{
+  padding: 10px;
+  display: inline-block;
+  margin-left: 5px;
+  width: 60%;
 
 /* Clear floats after the columns*/
 section:after {
@@ -42,10 +46,10 @@ section:after {
 
 /* Style the footer */
 footer {
-  background-color: #777;
-  padding: 10px;
+  display: inline-block;
+  width: 100%;
   text-align: center;
-  color: white;
+  background-color: darkgrey;
 }
 
 /* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */

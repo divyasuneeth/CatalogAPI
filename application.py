@@ -1,5 +1,5 @@
-from flask import Flask,render_template,url_for
-from sqlalchemy import create_engine, asc
+from flask import Flask,render_template,url_for,request
+from sqlalchemy import create_engine, asc,desc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, ListItems,User
 
@@ -16,7 +16,7 @@ categories = session.query(Category).order_by(asc(Category.name))
 
 @app.route('/')
 def showlistItems():
-    items = session.query(ListItems).order_by(asc(ListItems.name))
+    items = session.query(ListItems).order_by(desc(ListItems.id))
     return render_template('list_private.html', categories = categories,items=items)
 
 
@@ -35,14 +35,28 @@ def showItemDescription(catalogItem,item):
     item=session.query(ListItems).filter_by(name=item).first()
     return  render_template('description.html',categories=categories,item=item)  #"this page will "+item+" description in the catalog "+ catalogItem
 
-@app.route('/catalog/new')
+@app.route('/catalog/new',methods=['GET','POST'])
 def addNewItem():
-    return render_template('additem.html',categories=categories)
+    if request.method=='POST':
 
-@app.route('/catalog/<int:itemid>/edit')
+        newItem= ListItems(name=request.form['name'],description=request.form['desc'],category_id=request.form['category'])
+        session.add(newItem)
+        session.commit()
+        return redirect(url_for('showlistItem'))
+    else:
+        return render_template('additem.html',categories=categories)
+
+@app.route('/catalog/<int:itemid>/edit',methods=['GET','POST'])
 def editItem(itemid):
     item=session.query(ListItems).filter_by(id=itemid).first()
     return render_template('editItem.html',categories=categories,item=item)
+
+
+@app.route('/catalog/<int:itemid>/delete',methods=['GET','POST'])
+def deleteItem(itemid):
+    item=session.query(ListItems).filter_by(id=itemid).first()
+    return render_template('deleteItem.html',categories=categories,item=item)
+
 
 if __name__ =='__main__':
     app.debug=True

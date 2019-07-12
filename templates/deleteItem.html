@@ -1,0 +1,12 @@
+{%extends "main.html" %}
+{% block content %}
+<div>
+  
+  <a href="{{url_for('showlistItems')}}">Cancel</a>
+  <h4>Are you sure you want to delete {{item.name}} ?</h4>
+  <input type="button" name="yes" value="Yes">
+
+
+
+</div>
+{% endblock %}
