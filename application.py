@@ -42,6 +42,7 @@ def addNewItem():
         newItem= ListItems(name=request.form['name'],description=request.form['desc'],category_id=request.form['category'])
         session.add(newItem)
         session.commit()
+        flash('Successfully Added %s' % newItem.name)
         return redirect(url_for('showlistItem'))
     else:
         return render_template('additem.html',categories=categories)
@@ -56,7 +57,7 @@ def editItem(itemid):
             editeditem.description= request.form['desc']
         if request.form['category']:
             editeditem.category_id=request.form['category']
-
+        flash('Successfully Edited %s' % editeditem.name)
         return redirect(url_for('showlistItems'))
     else:
         return render_template('editItem.html',categories=categories,item=editeditem)
@@ -68,11 +69,13 @@ def deleteItem(itemid):
     if request.method=='POST':
         session.delete(deleteitem)
         session.commit()
+        flash('Successfully Deleted %s' % deleteitem.name)
         return redirect(url_for('showlistItems'))
     else:
         return render_template('deleteItem.html',categories=categories,item=deleteitem)
 
 
 if __name__ =='__main__':
+    app.secret_key = 'super_secret_key'
     app.debug=True
     app.run(host='0.0.0.0',port=8000, threaded = False)
