@@ -1,6 +1,6 @@
 from flask import Flask,render_template,url_for,request,redirect,flash,jsonify
 from sqlalchemy import create_engine, asc,desc
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker,joinedload
 from database_setup import Base, Category, ListItems,User
 
 app= Flask(__name__)
@@ -14,11 +14,13 @@ session = DBSession()
 
 categories = session.query(Category).order_by(asc(Category.name))
 
-@app.route('/catalog/JSON')
-def catalogMenuJSON():
-    #catalog = session.query(Category).filter_by(id=restaurant_id).one()
-    items = session.query(ListItems).all()
-    return jsonify(Catalog=[i.serialize for i in items])
+@app.route('/catalog.JSON')
+def catalogJSON():
+    categories = session.query(Category).options(joinedload(Category.listitems)).all()
+    print categories
+    data=dict(Catalog=[dict(c.serialize, items=[i.serialize for i in c.listitems])
+                         for c in categories])
+    return jsonify(data)
 
 
 

@@ -27,9 +27,7 @@ class Category(Base):
 
     @property
     def serialize(self):
-
-       return {
-
+        return {
            'id'     : self.id,
            'name'   :self.name,
        }
@@ -42,15 +40,14 @@ class ListItems(Base):
     id=Column(Integer,primary_key=True)
     description=Column(String(250))
     category_id=Column(Integer,ForeignKey('category.id'))
-    category=relationship(Category)
+    category=relationship(Category,backref='listitems')
 
     @property
     def serialize(self):
         return{
         'name':self.name,
         'id':self.id,
-        'description':self.description,
-        'category_id':self.category_id
+        'description':self.description
         }
 engine= create_engine('sqlite:///categoryItems.db')
 
