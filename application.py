@@ -11,8 +11,20 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-
+from flask import session as login_session
+import random, string
 categories = session.query(Category).order_by(asc(Category.name))
+
+
+@app.route('/login')
+def showLogin():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)for x in xrange(32))
+    login_session['state']= state
+    return "The current session state is %s"% login_session['state']
+
+
+
+
 
 @app.route('/catalog.JSON')
 def catalogJSON():
