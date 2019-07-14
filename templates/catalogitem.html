@@ -1,10 +1,11 @@
 {%extends "main.html" %}
 {% block content %}
 
+<h4>Items</h4>
   {% for item in items %}
       <a href="{{url_for('showItemDescription',catalogItem=catalogItem,item=item.name)}}">{{item.name}} </a>&nbsp;&nbsp;&nbsp;&nbsp;
-      <a href="{{url_for('editItem',itemid=item.id)}}">Edit </a>&nbsp;
-      <a href="{{url_for('deleteItem',itemid=item.id)}}">Delete </a>
+      <a class="catlink" href="{{url_for('editItem',itemid=item.id)}}">Edit </a>&nbsp;
+      <a class="catlink" href="{{url_for('deleteItem',itemid=item.id)}}">Delete </a>
       <br><br>
   {% endfor %}
 {% endblock %}

@@ -1,0 +1,13 @@
+{% extends "main.html" %}
+{% block content %}
+	<form action="#" method = "post">
+    <div class="form-group col-md-6">
+
+      <a href="{{url_for('showlistItems')}}">Cancel</a><br><br>
+      <label for="name">Category</label>
+      <input class="form-control" type="text" name="name" value=""><br>
+
+    <button class="btn" type="submit" id="submit">Add </button>
+  </div>
+</form>
+{% endblock %}

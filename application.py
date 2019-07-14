@@ -30,7 +30,7 @@ categories = session.query(Category).order_by(asc(Category.name))
 
 @app.route('/login')
 def showLogin():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)for x in xrange(32))
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)for x in range(32))
     login_session['state']= state
     return render_template('login.html', STATE=state)   #"The current session state is %s"% login_session['state']
                                 # STATE =state is added to set the login state on POST
@@ -94,6 +94,7 @@ def gconnect():
 
     # Store the access token in the session for later use.
     login_session['access_token'] = credentials.access_token
+    print '*********'+ login_session['access_token']
     login_session['gplus_id'] = gplus_id
 
     # Get user info
@@ -121,11 +122,57 @@ def gconnect():
     output += '<img src="'
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'])
+    flash("You are now logged in as %s" % login_session['username'])
     print "done!"
     return output
 
 
+
+
+
+
+
+@app.route('/disconnect')
+def disconnect():
+    if 'provider' in login_session:
+        if login_session['provider']=='google':
+            gdisconnect()
+            del login_session['gplus_id']
+            #del login_session['credentials']
+        #if login_session['provider']=='facebook':
+            #fbdisconnect()
+            #del login_session['facebook_id']
+        del login_session['access_token']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+        del login_session['provider']
+
+        flash("You have successfully been logged out.")
+        return redirect(url_for('showlistItems'))
+    else:
+        flash("You were not logged in to begin with.")
+        return redirect(url_for('showlistItems'))
+
+
+#@app.route('/gdisconnect')
+def gdisconnect():
+    access_token =login_session.get('access_token')
+
+    if access_token is not None:
+        print 'In gdisconnect access token is %s', access_token
+        print 'User name is: '
+        print login_session['username']
+        url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
+        h = httplib2.Http()
+        result = h.request(url, 'GET')[0]
+
+    else:
+        print "Access Token None"
+        print access_token
+        response = make_response(json.dumps('Current user not connected.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
 
 
 @app.route('/catalog.JSON')
@@ -141,6 +188,9 @@ def catalogJSON():
 @app.route('/')
 def showlistItems():
     items = session.query(ListItems).order_by(desc(ListItems.id))
+    if 'username' not in login_session:
+         return render_template('lists.html', categories = categories,items=items)
+
     return render_template('list_private.html', categories = categories,items=items)
 
 
@@ -149,9 +199,13 @@ def showCatalogItems(catalogItem):
     try:
         c_item= session.query(Category).filter_by(name=catalogItem).one()
         items=session.query(ListItems).filter_by(category_id=c_item.id)
+        if 'username' not in login_session:
+             return render_template('catalog_public.html', categories = categories,items=items,catalogItem=catalogItem)
+        return render_template('catalogitem.html',categories = categories,items=items,catalogItem=catalogItem) #"this page will show all the items in the catalog "+ catalogItem
+
     except NoResultFound:
         c_item = []  #
-    return render_template('catalogitem.html',categories = categories,items=items,catalogItem=catalogItem) #"this page will show all the items in the catalog "+ catalogItem
+
 
 
 @app.route('/catalog/<string:catalogItem>/<string:item>')
@@ -159,15 +213,34 @@ def showItemDescription(catalogItem,item):
     item=session.query(ListItems).filter_by(name=item).first()
     return  render_template('description.html',categories=categories,item=item)  #"this page will "+item+" description in the catalog "+ catalogItem
 
+@app.route('/new',methods=['GET','POST'])
+def addNewCategory():
+    if 'username' not in login_session:
+        return redirect('/login')
+    if request.method=='POST':
+        newCategory= Category(name=request.form['name'])
+        session.add(newCategory)
+        session.commit()
+        flash('Successfully Added %s' % newCategory.name)
+        return redirect(url_for('showlistItems'))
+    else:
+        return render_template('addCategory.html',categories=categories)
+
+
+
+
+
+
 @app.route('/catalog/new',methods=['GET','POST'])
 def addNewItem():
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method=='POST':
-
         newItem= ListItems(name=request.form['name'],description=request.form['desc'],category_id=request.form['category'])
         session.add(newItem)
         session.commit()
         flash('Successfully Added %s' % newItem.name)
-        return redirect(url_for('showlistItem'))
+        return redirect(url_for('showlistItems'))
     else:
         return render_template('additem.html',categories=categories)
 
@@ -181,6 +254,8 @@ def editItem(itemid):
             editeditem.description= request.form['desc']
         if request.form['category']:
             editeditem.category_id=request.form['category']
+        session.add(editeditem)
+        session.commit()
         flash('Successfully Edited %s' % editeditem.name)
         return redirect(url_for('showlistItems'))
     else:

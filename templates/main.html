@@ -1,43 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head><link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}"></head>
+	<head>
+		<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style1_27.css') }}"></head>
 	<body>
-    <header>
-  <h2>Catalog App</h2>
-</header>
+		<div class="top-menu">
+			<div class="col-xs-3">
+				<a href="{{url_for('showlistItems')}}">
+					<span class="glyphicon glyphicon-home" aria-hidden="true"></span>Show All Items
+				</a>
+			</div>
+			<div class="col-xs-6 text-center header">
+				<p>Catalog APP</p>
+			</div>
+			<div class="col-xs-3 text-right">
+				{%if 'username' not in session %}
+			<a href="{{url_for('showLogin')}}">Login </a>
+			{% else %}
+			<a href="{{url_for('disconnect')}}">Logout </a>
+			{% endif %}
 
-<section>
-  <nav>
-
-      {% for i in categories %}
-      <a href={{url_for('showCatalogItems',catalogItem=i.name)}}>{{i.name}}</a><br>
-      {% endfor %}
-
-  </nav>
-
-  <article>
-		<div>
-			{% with messages=get_flashed_messages()%}
-			{% if messages %}
-				<ul>
-					{% for message in messages %}
-						<li><strong>{{message}}</strong></li>
-					{% endfor %}
-				</ul>
-				{% endif%}
-			{% endwith %}
+			</div>
 		</div>
-   <div class="container">
-			{% block content %}
-			{% endblock %}
+		<div class="banner"></div>
 
+		<div class="container-fluid">
+		  <div class="row">
+		    <div id="nav" class="col-xs-3">
+					<h4>Categories</h4>
+ 		       {% for i in categories %}
+ 		       <a href={{url_for('showCatalogItems',catalogItem=i.name)}}>{{i.name}}</a><br>
+ 		       {% endfor %}
+		    </div>
+		    <div id="article" class="col-xs-9">
+					<div class="text-right">
+						<a  href="{{url_for('addNewCategory')}}">Add Category</a> &nbsp;&nbsp;
+					<a  href="{{url_for('addNewItem')}}">Add item</a>
+
+					</div>
+					<div class="flash">
+						{% with messages=get_flashed_messages()%}
+						{% if messages %}
+							<ul>
+								{% for message in messages %}
+									<li><strong>{{message}}</strong></li>
+								{% endfor %}
+							</ul>
+							{% endif%}
+						{% endwith %}
+					</div>
+
+						<div class="content">
+							{% block content %}
+							{% endblock %}
+						</div>
+
+
+		    </div>
+		  </div>
+			<div id="footer" class="row">
+			       <span class="text-muted">
+			         Divya Suneeth |
+			         <a href="#">GitHub</a>
+			       </span>
+			</div>
 		</div>
-  </article>
-</section>
 
-<footer>
-  <p>Footer</p>
-</footer>
+
+
 
 	</body>
 </html>

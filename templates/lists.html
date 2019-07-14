@@ -1,8 +1,14 @@
 {% extends "main.html" %}
+
 {% block content %}
-<div>
+
+<div >
+  <h4>Recent Items</h4>
+  <br>
+  <p>
 {% for item in items %}
-<p>  {{item.name}}</p>
+  {{item.name}}<br><br>
   {% endfor %}
+  </p>
 </div>
 {% endblock %}

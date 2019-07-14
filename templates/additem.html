@@ -1,24 +1,24 @@
 {% extends "main.html" %}
 {% block content %}
 	<form action="#" method = "post">
-    <div>
+    <div class="form-group col-md-6">
 
       <a href="{{url_for('showlistItems')}}">Cancel</a><br><br>
-      <div><label for="name">Title</label>
-      <input type="text" name="name" value=""></div>
-      <div><label for="desc">Description</label>
-      <input type="text" name="desc" value=""></div>
-      <div>
+      <label for="name">Title</label>
+      <input class="form-control" type="text" name="name" value=""><br>
+      <label for="desc">Description</label>
+     <textarea class="form-control" maxlength="500" rows="5" name="desc"></textarea><br>
+
         <label for="catagory">Category</label>
 
-        <select  name="category">
+        <select class="form-control" name="category">
           {%for c in categories%}
             <option value="{{c.id}}">{{c.name}}</option>
           {%endfor%}
         </select>
-      </div>
-      <br>
-    <button type="submit" id="submit" type="submit">Add </button>
+
+      <br><br>
+    <button class="btn" type="submit" id="submit">Add </button>
   </div>
 </form>
 {% endblock %}

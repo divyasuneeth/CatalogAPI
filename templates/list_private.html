@@ -1,8 +1,14 @@
 {% extends "main.html" %}
 {% block content %}
-<a href="{{url_for('addNewItem')}}">Add item</a>
+<div>
 
+<h4>Recent Items</h4>
+<p>
 {% for item in items %}
-  <h5>{{item.name}}</h5>
+  {{item.name}}<br>
   {% endfor %}
+  </p>
+
+</div>
+
 {% endblock %}

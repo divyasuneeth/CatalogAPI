@@ -1,18 +1,18 @@
 {% extends "main.html" %}
 {% block content %}
 <form action="{{url_for('editItem',itemid=item.id)}}" method="post">
-  <div>
+<div class="col-md-6"><a href="{{url_for('showlistItems')}}">Cancel</a></div><br>
+  <div class="form-group col-md-6">
 
-    <a href="{{url_for('showlistItems')}}">Cancel</a><br>
+  <label for="name">Title</label>
+    <input class="form-control" maxlength="100" type="text" name="name" value="{{item.name}}"><br>
+    <label for="desc">Description</label>
+      <textarea class="form-control" maxlength="250" rows="3" name="desc">{{item.description}}</textarea><br>
 
-    <div><label for="name">Title</label>
-    <input type="text" name="name" value="{{item.name}}"></div>
-    <div><label for="desc">Description</label>
-    <input type="text" name="desc" value="{{item.description}}"></div>
-    <div>
+
       <label for="catagory">Category</label>
 
-      <select  name="category">
+      <select class="form-control"  name="category">
         {%for c in categories%}
             {% if c.id==item.category_id %}
               <option value="{{c.id}}" selected>{{c.name}}</option>
@@ -21,8 +21,9 @@
             {% endif %}
         {%endfor%}
       </select>
-    </div>
-    <button type="submit" id="submit" >Submit</button>
+<br><br>
+    <button class="btn btn-default delete" type="submit" id="submit" >Submit</button>
   </div>
+
 </form>
 {% endblock %}
