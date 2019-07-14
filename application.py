@@ -188,8 +188,8 @@ def catalogJSON():
 @app.route('/')
 def showlistItems():
     items = session.query(ListItems).order_by(desc(ListItems.id))
-    if 'username' not in login_session:
-         return render_template('lists.html', categories = categories,items=items)
+    #if 'username' not in login_session:
+        # return render_template('lists.html', categories = categories,items=items)
 
     return render_template('list_private.html', categories = categories,items=items)
 

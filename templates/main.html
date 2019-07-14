@@ -3,29 +3,30 @@
 	<head>
 		<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style1_27.css') }}"></head>
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style_1.css') }}"></head>
 	<body>
-		<div class="top-menu">
-			<div class="col-xs-3">
-				<a href="{{url_for('showlistItems')}}">
-					<span class="glyphicon glyphicon-home" aria-hidden="true"></span>Show All Items
-				</a>
-			</div>
-			<div class="col-xs-6 text-center header">
-				<p>Catalog APP</p>
-			</div>
-			<div class="col-xs-3 text-right">
-				{%if 'username' not in session %}
-			<a href="{{url_for('showLogin')}}">Login </a>
-			{% else %}
-			<a href="{{url_for('disconnect')}}">Logout </a>
-			{% endif %}
 
-			</div>
-		</div>
-		<div class="banner"></div>
+		<!--<div class="banner"></div>-->
 
 		<div class="container-fluid">
+			<div class="row top-menu">
+				<div class="col-xs-3 menu">
+					<a href="{{url_for('showlistItems')}}">
+						<span class="glyphicon" aria-hidden="true"></span>Item Catalog App
+					</a>
+				</div>
+				<div class="col-xs-8 banner">
+
+				</div>
+				<div class="col-xs-1 text-right menu">
+					{%if 'username' not in session %}
+				<a href="{{url_for('showLogin')}}">Login </a>
+				{% else %}
+				<a href="{{url_for('disconnect')}}">Logout </a>
+				{% endif %}
+
+				</div>
+			</div>
 		  <div class="row">
 		    <div id="nav" class="col-xs-3">
 					<h4>Categories</h4>
@@ -62,7 +63,7 @@
 			<div id="footer" class="row">
 			       <span class="text-muted">
 			         Divya Suneeth |
-			         <a href="#">GitHub</a>
+			         <a href="https://github.com/divyasuneeth/catalog">GitHub</a>
 			       </span>
 			</div>
 		</div>
