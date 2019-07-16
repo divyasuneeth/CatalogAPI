@@ -16,3 +16,10 @@ navigate to the catalog folder on your vagrant machine
 run application.py
 
 How to navigate the APP:
+
+The home page displays variety of categories, and a list of recently added items.
+A list of items belonging to a ctegory is displayed on selecting a category.
+Further, on selecting an item, the description of the item is displayed.
+
+User authentication is required to add an category or item .
+After login, the user can also edit and delete an existing item.
