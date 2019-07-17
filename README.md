@@ -7,9 +7,9 @@ The database is created by running database_setup.py and initial data is populat
 The main code is located in application.py
 This app uses google for third party authentication.
 
+
 ## Usage
 **Steps to run the APP:**
-
 
 * Clone the catalog repo (https://github.com/divyasuneeth/CatalogAPI)
 * Install Vagrant and VirtualBox
