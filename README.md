@@ -10,11 +10,11 @@ This app uses google for third party authentication.
 ## Usage
 **Steps to run the APP:**
 
-Install Vagrant and VirtualBox
-Clone the [catalog repo] (https://github.com/divyasuneeth/CatalogAPI)
-Launch the Vagrant VM (vagrant up)
-navigate to the catalog folder on your vagrant machine
-run application.py
+*Install Vagrant and VirtualBox
+*Clone the catalog repo (https://github.com/divyasuneeth/CatalogAPI)
+*Launch the Vagrant VM using **vagrant up** command followed by vagrant ssh
+*navigate to the catalog folder on your vagrant machine
+*run application.py
 
 ## How to navigate the APP:
 
