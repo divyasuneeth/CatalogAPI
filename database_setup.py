@@ -12,7 +12,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
-    email = Column(String(100), nullable=False)
+    email = Column(String(250), nullable=False)
     picture = Column(String(250))
 
 
@@ -24,6 +24,8 @@ class Category(Base):
 
     id=Column(Integer,primary_key=True)
     name=Column(String(250),nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
     @property
     def serialize(self):
@@ -41,6 +43,8 @@ class ListItems(Base):
     description=Column(String(250))
     category_id=Column(Integer,ForeignKey('category.id'))
     category=relationship(Category,backref='listitems')
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
     @property
     def serialize(self):
@@ -49,6 +53,6 @@ class ListItems(Base):
         'id':self.id,
         'description':self.description
         }
-engine= create_engine('sqlite:///categoryItems.db')
+engine= create_engine('sqlite:///categorywithusers.db')
 
 Base.metadata.create_all(engine)

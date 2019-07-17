@@ -10,14 +10,14 @@ import httplib2
 import string
 from flask import session as login_session
 from flask import make_response
-from flask import Flask, render_template, url_for, request, redirect,flash, jsonify
+from flask import Flask, render_template, url_for, request, redirect, flash, jsonify
 from functools import wraps
 
 
 app = Flask(__name__)
 
 
-engine = create_engine('sqlite:///categoryitems.db')
+engine = create_engine('sqlite:///categorywithusers.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -48,6 +48,28 @@ def showLogin():
     return render_template('login.html', STATE=state)
 # The current session state is %s"% login_session['state']
 # STATE =state is added to set the login state on POST
+
+
+def createUser(login_session):
+    newUser = User(name=login_session['username'], email=login_session[
+                   'email'], picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -101,8 +123,8 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'
-                                 ), 200)
+        response = make_response(json.dumps('Current user is already connected.'),
+                                 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -123,10 +145,11 @@ def gconnect():
     login_session['email'] = data['email']
 
     # see if the user exists if not make a new one
-    # user_id=getUserID(login_session['email'])
-#    if not user_id:
-    #    user_id=createUser(login_session)
-    # login_session['user_id']=user_id
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+
+    login_session['user_id'] = user_id
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -154,6 +177,7 @@ def disconnect():
         del login_session['email']
         del login_session['picture']
         del login_session['provider']
+        del login_session['user_id']
 
         flash("You have successfully been logged out.")
         return redirect(url_for('showlistItems'))
@@ -210,9 +234,9 @@ def showCatalogItems(catalogItem):
         c_item = session.query(Category).filter_by(name=catalogItem).one()
         items = session.query(ListItems).filter_by(category_id=c_item.id)
         if 'username' not in login_session:
-             return render_template('catalog_public.html',
-                                    categories=categories,
-                                    items=items, catalogItem=catalogItem)
+            return render_template('catalog_public.html',
+                                   categories=categories,
+                                   items=items, catalogItem=catalogItem)
         return render_template('catalogitem.html',
                                categories=categories,
                                items=items, catalogItem=catalogItem)
@@ -237,10 +261,11 @@ def addNewCategory():
     #    return redirect('/login')
     if request.method == 'POST':
         if request.form['name'] == '':
-            flash ("Please enter a category to add")
+            flash("Please enter a category to add")
             return render_template('addCategory.html', categories=categories)
         else:
-            newCategory = Category(name=request.form['name'])
+            newCategory = Category(name=request.form['name'],
+                                   user_id=login_session['user_id'])
             session.add(newCategory)
             session.commit()
             flash('Successfully Added %s' % newCategory.name)
@@ -264,14 +289,15 @@ def checkValid():
 @app.route('/catalog/new', methods=['GET', 'POST'])
 @login_required
 def addNewItem():
-#    if 'username' not in login_session:
-#        return redirect('/login')
+    # if 'username' not in login_session:
+        # return redirect('/login')
     if request.method == 'POST':
 
         if checkValid():
             newItem = ListItems(name=request.form['name'],
                                 description=request.form['desc'],
-                                category_id=request.form['category'])
+                                category_id=request.form['category'],
+                                user_id=login_session['user_id'])
             session.add(newItem)
             session.commit()
             flash('Successfully Added %s' % newItem.name)
@@ -287,17 +313,22 @@ def addNewItem():
 @login_required
 def editItem(itemid):
     editeditem = session.query(ListItems).filter_by(id=itemid).one()
+    user_id = login_session['user_id']
     if request.method == 'POST':
-        if request.form['name']:
-            editeditem.name = request.form['name']
-        if request.form['desc']:
-            editeditem.description = request.form['desc']
-        if request.form['category']:
-            editeditem.category_id = request.form['category']
-        session.add(editeditem)
-        session.commit()
-        flash('Successfully Edited %s' % editeditem.name)
-        return redirect(url_for('showlistItems'))
+        if user_id == editeditem.user_id:
+            if request.form['name']:
+                editeditem.name = request.form['name']
+            if request.form['desc']:
+                editeditem.description = request.form['desc']
+            if request.form['category']:
+                editeditem.category_id = request.form['category']
+            session.add(editeditem)
+            session.commit()
+            flash('Successfully Edited %s' % editeditem.name)
+            return redirect(url_for('showlistItems'))
+        else:
+            flash('You are not authorized to edit item %s' % editeditem.name)
+            return redirect(url_for('showlistItems'))
     else:
         return render_template('editItem.html',
                                categories=categories, item=editeditem)
@@ -307,11 +338,16 @@ def editItem(itemid):
 @login_required
 def deleteItem(itemid):
     deleteitem = session.query(ListItems).filter_by(id=itemid).first()
+    user_id = login_session['user_id']
     if request.method == 'POST':
-        session.delete(deleteitem)
-        session.commit()
-        flash('Successfully Deleted %s' % deleteitem.name)
-        return redirect(url_for('showlistItems'))
+        if user_id == deleteitem.user_id:
+            session.delete(deleteitem)
+            session.commit()
+            flash('Successfully Deleted %s' % deleteitem.name)
+            return redirect(url_for('showlistItems'))
+        else:
+            flash('You are not authorized to delete item %s' % deleteitem.name)
+            return redirect(url_for('showlistItems'))
     else:
         return render_template('deleteItem.html',
                                categories=categories, item=deleteitem)
