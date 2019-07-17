@@ -10,11 +10,11 @@ This app uses google for third party authentication.
 ## Usage
 **Steps to run the APP:**
 
-*Install Vagrant and VirtualBox
-*Clone the catalog repo (https://github.com/divyasuneeth/CatalogAPI)
-*Launch the Vagrant VM using **vagrant up** command followed by vagrant ssh
-*navigate to the catalog folder on your vagrant machine
-*run application.py
+* Install Vagrant and VirtualBox
+* Clone the catalog repo (https://github.com/divyasuneeth/CatalogAPI)
+* Launch the Vagrant VM using **vagrant up** command followed by vagrant ssh
+* navigate to the catalog folder on your vagrant machine
+* run application.py
 
 ## How to navigate the APP:
 
@@ -22,5 +22,5 @@ The home page displays variety of categories, and a list of recently added items
 A list of items belonging to a category is displayed on selecting a category.
 Further, on selecting an item, the description of the item is displayed.
 
-*User authentication is required to add an category or item .*
+__*User authentication is required to add an category or item .*__
 After login, the user can also edit and delete an existing item.
