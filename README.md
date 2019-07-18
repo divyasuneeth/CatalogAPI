@@ -1,3 +1,5 @@
+# Sports Catalog
+
 # Description
 
 This web application provides a list of items within a variety of categories and integrate third party user registration and authentication.
@@ -6,6 +8,18 @@ The app uses SQLite database that contains a catalog of items and associated inf
 The database is created by running database_setup.py and initial data is populated by running itemsforcatalog.py
 The main code is located in application.py
 This app uses google for third party authentication.
+
+
+
+## Components
+
+Routing and templating made with Flask
+Uses SQLAlchemy to communicate with the back-end db
+RESTful API endpoints that return json files
+Uses Google to authenticate users
+authenticated users can create and edit items
+Front-end forms and webpages built with Boostrap
+
 
 
 ## Usage
