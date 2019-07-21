@@ -34,6 +34,9 @@ This is a RESTful web application created with Python 3 and the Python micro-fra
    * This will take you to the shared folder between your virtual machine and host machine.
    * Type **ls** to ensure that you are inside the directory that contains application.py, database_setup.py, and two directories named 'templates' and 'static'
 
+* Install modules in requirements.txt
+`pip  install  -r  requirements.txt`
+
 * Now to initialize the database.
 **`$ python database_setup.py`**
 
