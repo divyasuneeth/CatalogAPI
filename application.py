@@ -10,8 +10,10 @@ import httplib2
 import string
 from flask import session as login_session
 from flask import make_response
-from flask import Flask, render_template, url_for, request, redirect, flash, jsonify
+from flask import Flask, render_template, url_for, request
+from flask import redirect, flash, jsonify
 from functools import wraps
+import logging
 
 
 app = Flask(__name__)
@@ -29,9 +31,11 @@ APPLICATION_NAME = "CatalogApp"
 categories = session.query(Category).order_by(asc(Category.name))
 
 
-# View decorator to avoid repeated code
+
 def login_required(f):
+    """ View decorator to avoid repeated code """
     @wraps(f)
+
     def decorated_function(*args, **kwargs):
         if 'username' in login_session:
             return f(*args, **kwargs)
@@ -116,15 +120,15 @@ def gconnect():
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
             json.dumps("Token's client ID does not match app's."), 401)
-        print "Token's client ID does not match app's."
+        logging.info("Token's client ID does not match app's.")
         response.headers['Content-Type'] = 'application/json'
         return response
 
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(json.dumps('Current user is already '
+                                            'connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -156,9 +160,11 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px;height: 300px;border-radius:150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;">'
+    output += ' " style = "width: 300px;height: 300px;'
+    'border-radius:150px;-webkit-border-radius: '
+    '150px;-moz-border-radius: 150px;">'
     flash("You are now logged in as %s" % login_session['username'])
-    print "done!"
+    # print "done!"
     return output
 
 
@@ -195,12 +201,12 @@ def gdisconnect():
         print 'In gdisconnect access token is %s', access_token
         print 'User name is: '
         print login_session['username']
-        url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
+        url = 'https://accounts.google.com/o/oauth2/'
+        'revoke?token=%s' % access_token
         h = httplib2.Http()
         result = h.request(url, 'GET')[0]
     else:
-        print "Access Token None"
-        print access_token
+        logging.info("Access Token None")
         response = make_response(json.dumps('Current user not connected.'),
                                  401)
         response.headers['Content-Type'] = 'application/json'
@@ -211,7 +217,6 @@ def gdisconnect():
 def catalogJSON():
     categories = session.query(Category).options(joinedload
                                                  (Category.listitems)).all()
-    print categories
     data = dict(Catalog=[dict(c.serialize,
                               items=[i.serialize for i in c.listitems])
                          for c in categories])
